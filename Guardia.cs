@@ -1,41 +1,30 @@
 using UnityEngine;
 
-public class GuardAgent : MonoBehaviour
+public class Guardia : MonoBehaviour
 {
-    public string droneMessage = ""; // Mensaje recibido del drone
-    public string cameraMessage = ""; // Mensaje recibido de las cámaras
+    [SerializeField] private int guardiaId; // ID único para el guardia
+    public DronePatrol drone; // Referencia al dron
+    public CameraWithID[] cameras; // Referencia a las cámaras controladas por el guardia
 
-    public string messageToDrone = ""; // Respuesta al drone
-    public string messageToCamera = ""; // Respuesta a las cámaras
-
-    void Update()
+    private void Start()
     {
-        ProcessMessages();
+        Debug.Log($"Guardia inicializado con ID: {guardiaId}");
+
+        // Vincular cámaras con el guardia
+        foreach (CameraWithID camera in cameras)
+        {
+            camera.SetGuardia(this);
+        }
     }
 
-    void ProcessMessages()
+    public void NotifyLadronDetected(int cameraId, int ladronId)
     {
-        if (!string.IsNullOrEmpty(droneMessage))
-        {
-            Debug.Log($"GuardAgent: Received from Drone - {droneMessage}");
-            // Responde al drone dependiendo de su estado
-            if (droneMessage.Contains("landing zone"))
-            {
-                messageToDrone = "Guard: Confirmed landing.";
-            }
-            else
-            {
-                messageToDrone = "Guard: Continue patrol.";
-            }
-            droneMessage = ""; // Reset message
-        }
+        Debug.Log($"Guardia {guardiaId}: Cámara {cameraId} detectó al ladrón con ID {ladronId}. Enviando dron...");
+        drone.SetPriorityTarget(ladronId); // Enviar dron al ladrón
+    }
 
-        if (!string.IsNullOrEmpty(cameraMessage))
-        {
-            Debug.Log($"GuardAgent: Received from Camera - {cameraMessage}");
-            // Responde a las cámaras en función de la alerta
-            messageToCamera = "Guard: Investigating camera alert.";
-            cameraMessage = ""; // Reset message
-        }
+    public void NotifyLadronEliminated(int ladronId)
+    {
+        Debug.Log($"Guardia {guardiaId}: Ladrón con ID {ladronId} eliminado por el dron.");
     }
 }
