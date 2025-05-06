@@ -22,5 +22,3 @@ Este proyecto implementa una simulación en Unity de un dron multiagente entrena
 - **OpenCV** (procesamiento de imágenes)
 
 ---
-
-## 📂 Estructura del proyecto
